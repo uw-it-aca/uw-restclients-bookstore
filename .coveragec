@@ -1,0 +1,4 @@
+[run]
+branch = True
+source = uw_bookstore/
+include = uw_bookstore/*
