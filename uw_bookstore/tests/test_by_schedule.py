@@ -32,8 +32,8 @@ class BookstoreScheduleTest(TestCase):
         schedule_books = books.get_books_for_schedule(schedule)
 
         self.assertEquals(len(schedule_books), 2)
-        self.assertEqual(len(schedule_books['13833']), 0)
-        self.assertEqual(len(schedule_books['13830']), 2)
+        self.assertEqual(len(schedule_books[13833]), 0)
+        self.assertEqual(len(schedule_books[13830]), 2)
 
     def test_verba_link(self):
         books = Bookstore()

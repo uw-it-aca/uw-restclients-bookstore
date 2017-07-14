@@ -128,7 +128,7 @@ class Bookstore(object):
             sln = section.sln
             if sln not in seen_slns:
                 seen_slns[sln] = True
-                slns.append("sln%s=%s" % (sln_count, section.sln))
+                slns.append("sln%d=%d" % (sln_count, section.sln))
                 sln_count += 1
 
         sln_string = "&".join(slns)
