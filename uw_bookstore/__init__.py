@@ -10,20 +10,20 @@ import re
 
 
 BOOK_PREFIX = "http://uw-seattle.verbacompare.com/m?section_id="
+DAO = Bookstore_DAO()
 
 
 class Bookstore(object):
     """
     Get book information for courses.
     """
+
     def get_books_by_quarter_sln(self, quarter, sln):
-        dao = Bookstore_DAO()
-        sln_string = self._get_sln_string(sln)
         url = "/myuw/myuw_mobile_beta.ubs?quarter=%s&%s" % (
             quarter,
-            sln_string,
+            self._get_sln_string(sln),
             )
-        response = dao.getURL(url, {"Accept": "application/json"})
+        response = DAO.getURL(url, {"Accept": "application/json"})
         if response.status != 200:
             raise DataFailureException(url, response.status, response.data)
 
@@ -33,7 +33,7 @@ class Bookstore(object):
 
         sln_data = data[str(sln)]
 
-        if len(sln_data) > 0:
+        if len(sln_data):
             for book_data in sln_data:
                     book = Book()
                     book.isbn = book_data["isbn"]
@@ -79,11 +79,10 @@ class Bookstore(object):
         Multiple calls to this with the same schedule may result in
         different urls.
         """
-        dao = Bookstore_DAO()
-
         url = self.get_verba_url(schedule)
-
-        response = dao.getURL(url, {"Accept": "application/json"})
+        if url is None:
+            return None
+        response = DAO.getURL(url, {"Accept": "application/json"})
         if response.status != 200:
             raise DataFailureException(url, response.status, response.data)
 
@@ -97,40 +96,33 @@ class Bookstore(object):
 
     def get_verba_url(self, schedule):
         sln_string = self._get_slns_string(schedule)
-        url = "/myuw/myuw_mobile_v.ubs?quarter=%s&%s" % (
-            schedule.term.quarter,
-            sln_string,
+        if sln_string:
+            url = "/myuw/myuw_mobile_v.ubs?quarter=%s&%s" % (
+                schedule.term.quarter,
+                sln_string,
             )
-
-        return url
+            return url
+        return None
 
     def _get_sln_string(self, sln):
-        return "sln1=%s" % sln
+        return "sln1=%d" % sln
 
     def _get_slns(self, schedule):
         slns = []
-        # Prevent dupes - mainly for mock data
-        seen_slns = {}
         for section in schedule.sections:
             sln = section.sln
-            if sln not in seen_slns:
-                seen_slns[sln] = True
+            if sln and sln not in slns:
                 slns.append(sln)
-
         return slns
 
     def _get_slns_string(self, schedule):
-        slns = []
-        # Prevent dupes - mainly for mock data
-        seen_slns = {}
-        sln_count = 1
-        for section in schedule.sections:
-            sln = section.sln
-            if sln not in seen_slns:
-                seen_slns[sln] = True
-                slns.append("sln%d=%d" % (sln_count, section.sln))
+        valid_slns = self._get_slns(schedule)
+        if len(valid_slns):
+            slns = []
+            sln_count = 1
+            for sln in valid_slns:
+                slns.append("sln%d=%d" % (sln_count, sln))
                 sln_count += 1
-
-        sln_string = "&".join(slns)
-
-        return sln_string
+            sln_string = "&".join(slns)
+            return sln_string
+        return None
