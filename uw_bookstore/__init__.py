@@ -53,7 +53,7 @@ class Bookstore(object):
                     books.append(book)
         return books
 
-    def get_books_by_schedule(self, schedule):
+    def get_books_for_schedule(self, schedule):
         """
         Returns a dictionary of data.  SLNs are the keys, an array of Book
         objects are the values.
