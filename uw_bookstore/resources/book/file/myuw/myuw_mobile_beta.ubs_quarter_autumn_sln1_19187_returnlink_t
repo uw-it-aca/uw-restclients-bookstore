@@ -1,5 +1,5 @@
 {
-    "13830": [
+    "19187": [
         {
             "isbn": "9780878935970",
             "title": "Principles Of Conservation Biology (3e 06)",
@@ -27,6 +27,11 @@
             "required": true,
             "notes": "required",
             "cover_image": "www7.bookstore.washington.edu/MyUWImage.taf?isbn=9781934931400&key=f66964a1341ff6e6518530eee30209a4"
+        }
+    ],
+    "ubsLink": [
+        {
+            "search": "http://www.ubookstore.com/adoption-search-results?ccid=9335"
         }
     ]
 }
