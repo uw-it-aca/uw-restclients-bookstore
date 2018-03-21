@@ -73,13 +73,13 @@ class Bookstore(object):
                 pass
         return books
 
-    def get_link_for_schedule(self, schedule):
+    def get_url_for_schedule(self, schedule):
         """
         Returns a link to verba.  The link varies by campus and schedule.
         Multiple calls to this with the same schedule may result in
         different urls.
         """
-        url = self.get_verba_url(schedule)
+        url = self._get_url(schedule)
         if url is None:
             return None
         response = DAO.getURL(url, {"Accept": "application/json"})
@@ -91,7 +91,7 @@ class Bookstore(object):
         if "ubsLink" in data:
             return data["ubsLink"][0]["search"]
 
-    def get_verba_url(self, schedule):
+    def _get_url(self, schedule):
         sln_string = self._get_slns_string(schedule)
         if sln_string:
             url = "/myuw/myuw_mobile_v.ubs?quarter=%s&%s&returnlink=t" % (
