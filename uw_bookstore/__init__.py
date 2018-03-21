@@ -53,7 +53,7 @@ class Bookstore(object):
                     books.append(book)
         return books
 
-    def get_books_for_schedule(self, schedule):
+    def get_books_by_schedule(self, schedule):
         """
         Returns a dictionary of data.  SLNs are the keys, an array of Book
         objects are the values.
@@ -94,7 +94,7 @@ class Bookstore(object):
     def _get_url(self, schedule):
         sln_string = self._get_slns_string(schedule)
         if sln_string:
-            url = "/myuw/myuw_mobile_v.ubs?quarter=%s&%s&returnlink=t" % (
+            url = "/myuw/myuw_mobile_beta.ubs?quarter=%s&%s&returnlink=t" % (
                 schedule.term.quarter,
                 sln_string,
             )
