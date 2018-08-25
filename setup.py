@@ -23,7 +23,6 @@ setup(
     include_package_data=True,
     install_requires=['UW-RestClients-Core<1.0',
                       'UW-RestClients-SWS<2.0',
-                      'UW-RestClients-PWS<1.0',
                       'commonconf',
                       'unittest2',
                       ],
