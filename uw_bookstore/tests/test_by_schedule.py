@@ -53,12 +53,12 @@ class BookstoreScheduleTest(TestCase):
         schedule = get_schedule_by_regid_and_term(
             'AA36CCB8F66711D5BE060004AC494FFE', term)
 
-        verba_link = books.get_verba_link_for_schedule(schedule)
+        verba_link = books.get_url_for_schedule(schedule)
 
         self.assertEquals(
-            ("http://uw-seattle.verbacompare.com/m?" +
-             "section_id=AB12345&quarter=spring"), verba_link,
-            "Seattle student has seattle link")
+            ('http://www.ubookstore.com/adoption-search-results?' +
+             'ccid=9335,10822'),
+            verba_link)
 
         # no valid sln
         books = Bookstore()
@@ -67,7 +67,7 @@ class BookstoreScheduleTest(TestCase):
             'FE36CCB8F66711D5BE060004AC494F31', term,
             transcriptable_course="all")
         self.assertEqual(schedule.sections[0].sln, 0)
-        self.assertIsNone(books.get_verba_link_for_schedule(schedule))
+        self.assertIsNone(books.get_url_for_schedule(schedule))
 
     def test_dupe_slns(self):
         books = Bookstore()
@@ -81,11 +81,12 @@ class BookstoreScheduleTest(TestCase):
         schedule.sections.append(schedule.sections[0])
         schedule.sections.append(schedule.sections[0])
 
-        verba_link = books.get_verba_url(schedule)
+        verba_link = books.get_url_for_schedule(schedule)
 
         self.assertEquals(
             verba_link,
-            '/myuw/myuw_mobile_v.ubs?quarter=spring&sln1=13830&sln2=13833')
+            'http://www.ubookstore.com/adoption-search-results' +
+            '?ccid=9335,10822')
 
         schedule_books = books.get_books_for_schedule(schedule)
         self.assertEquals(len(schedule_books), 2)

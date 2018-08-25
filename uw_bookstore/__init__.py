@@ -19,7 +19,7 @@ class Bookstore(object):
     """
 
     def get_books_by_quarter_sln(self, quarter, sln):
-        url = "/myuw/myuw_mobile_beta.ubs?quarter=%s&%s" % (
+        url = "/myuw/myuw_mobile_beta.ubs?quarter=%s&%s&returnlink=t" % (
             quarter,
             self._get_sln_string(sln),
             )
@@ -73,13 +73,13 @@ class Bookstore(object):
                 pass
         return books
 
-    def get_verba_link_for_schedule(self, schedule):
+    def get_url_for_schedule(self, schedule):
         """
         Returns a link to verba.  The link varies by campus and schedule.
         Multiple calls to this with the same schedule may result in
         different urls.
         """
-        url = self.get_verba_url(schedule)
+        url = self._get_url(schedule)
         if url is None:
             return None
         response = DAO.getURL(url, {"Accept": "application/json"})
@@ -88,16 +88,13 @@ class Bookstore(object):
 
         data = json.loads(response.data)
 
-        for key in data:
-            if re.match(r'^[A-Z]{2}[0-9]{5}$', key):
-                return "%s%s&quarter=%s" % (BOOK_PREFIX,
-                                            key,
-                                            schedule.term.quarter)
+        if "ubsLink" in data:
+            return data["ubsLink"][0]["search"]
 
-    def get_verba_url(self, schedule):
+    def _get_url(self, schedule):
         sln_string = self._get_slns_string(schedule)
         if sln_string:
-            url = "/myuw/myuw_mobile_v.ubs?quarter=%s&%s" % (
+            url = "/myuw/myuw_mobile_beta.ubs?quarter=%s&%s&returnlink=t" % (
                 schedule.term.quarter,
                 sln_string,
             )
