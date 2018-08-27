@@ -8,12 +8,10 @@ from uw_sws.term import get_current_term,\
 from uw_sws.registration import get_schedule_by_regid_and_term
 from restclients_core.exceptions import DataFailureException
 from uw_bookstore.util import fdao_bookstore_override
-from uw_pws.util import fdao_pws_override
 from uw_sws.util import fdao_sws_override
 
 
 @fdao_bookstore_override
-@fdao_pws_override
 @fdao_sws_override
 class BookstoreScheduleTest(TestCase):
     def test_get_book(self):
