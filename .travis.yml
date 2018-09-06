@@ -1,17 +1,16 @@
 sudo: false
 language: python
 python:
-- '2.7'
 - '3.6'
 before_script:
 - pip install -e .
-- pip install pep8
+- pip install pycodestyle
 - pip install nose2
 - pip install coverage
 - pip install commonconf
 - pip install python-coveralls
 script:
-- pep8 uw_bookstore/ --exclude=uw_bookstore/tests
+- pycodestyle uw_bookstore/ --exclude=uw_bookstore/tests
 - coverage run --source=uw_bookstore uw_bookstore/test.py -v
 after_script:
 - coveralls
@@ -26,4 +25,4 @@ deploy:
     secure: LHMdAAfUjh9DAKl81wrTipIX+8fuH1KAe7AbLcz9py/0WPpAJC46yWUhI0hT+gOc//7XzhS06XFDUXzVrw8REI7h60bu5a2QEFTHogTuSCTKdAjMO2MdS5bbwhBZFSdOM1+Cob+8viXqAo36aRErP/WvnM9wfJ2+2J1q5BmIhLP9aAW9OhJ89lLVtaUSfW9khDtr/5Zkgq3wq9HiT4kxyc+U8bI/h9x40hmIM77uFyBDMavm6rC3gqwKJAG8BEeQ17+WYox406nMj1ibNq05ubHZXhG1CiEOwo8g6s/shz2QjrZVlbpLeXd+dQt5ncQQBKuK96O/wttm2ZitUyDUz7hMtvKRRtRHjgeNYRsBdIO4iTcexZbDwzDqDgw1jI2dosX3OnOuHsE8kDHeci4rMAXSRZQU7hewCJDbppXe44xvwDs6dUF8cvYYHxzw6kT+5ORd3U+ge8ZxIxHj6KIMwWqUvKFSGxhGzlnewSMktVsCyckVNrPbgpo6ggbNYSJ0EZb8qhe72ssIUySbNuEb+vL78Hnyo6DBnmAwDwxQ7iqTVSqvZtFwI7HV9rdHHZ4SiuCdG6DSlXJyMrTJoDtn5yu4kyZKdYTfQI7AlPtBwYl0vmoZa6tD1DR4Cr2A75E5lU/injW3a+nAQ/q0RERXCvkzz2dOix023H77dFTii6M=
   on:
     tags: true
-condition: $TRAVIS_PYTHON_VERSION = "2.7"
+condition: $TRAVIS_PYTHON_VERSION = "3.6"

@@ -21,8 +21,8 @@ setup(
     author="UW-IT AXDD",
     author_email="aca-it@uw.edu",
     include_package_data=True,
-    install_requires=['UW-RestClients-Core<1.0',
-                      'UW-RestClients-SWS<2.0',
+    install_requires=['UW-RestClients-Core>=1.0,<2.0',
+                      'UW-RestClients-SWS>=2.0,<3.0',
                       'commonconf',
                       'unittest2',
                       ],
@@ -35,7 +35,6 @@ setup(
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.6',
     ],
 )
