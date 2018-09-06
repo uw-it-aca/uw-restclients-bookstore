@@ -10,7 +10,7 @@ before_script:
 - pip install commonconf
 - pip install python-coveralls
 script:
-- pep8 uw_bookstore/ --exclude=uw_bookstore/tests
+- pycodestyle uw_bookstore/ --exclude=uw_bookstore/tests
 - coverage run --source=uw_bookstore uw_bookstore/test.py -v
 after_script:
 - coveralls
