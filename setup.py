@@ -24,7 +24,6 @@ setup(
     install_requires=['UW-RestClients-Core>1.0,<2.0',
                       'UW-RestClients-SWS>2.0,<3.0',
                       'commonconf>=1.0',
-                      'unittest2',
                       ],
     license='Apache License, Version 2.0',
     description=('A library for connecting to the UW Bookstore API'),

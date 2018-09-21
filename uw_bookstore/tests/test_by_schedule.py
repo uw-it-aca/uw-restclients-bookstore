@@ -1,8 +1,6 @@
 import logging
-from unittest import TestCase
-from commonconf import settings
+from unittest import skipIf, TestCase
 from uw_bookstore import Bookstore
-from unittest2 import skipIf
 from uw_sws.term import get_current_term,\
     get_term_by_year_and_quarter
 from uw_sws.registration import get_schedule_by_regid_and_term
