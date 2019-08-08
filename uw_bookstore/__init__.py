@@ -5,6 +5,7 @@ This is the interface for interacting with the UW Bookstore's book service.
 from uw_bookstore.dao import Bookstore_DAO
 from restclients_core.exceptions import DataFailureException
 from uw_bookstore.models import Book, BookAuthor
+from concurrent.futures import ThreadPoolExecutor
 import json
 import re
 
@@ -35,20 +36,20 @@ class Bookstore(object):
 
         if len(sln_data):
             for book_data in sln_data:
-                    book = Book()
-                    book.isbn = book_data["isbn"]
-                    book.title = book_data["title"]
-                    book.price = book_data["price"]
-                    book.used_price = book_data["used_price"]
-                    book.is_required = book_data["required"]
-                    book.notes = book_data["notes"]
-                    book.cover_image_url = book_data["cover_image"]
-                    book.authors = []
+                book = Book()
+                book.isbn = book_data["isbn"]
+                book.title = book_data["title"]
+                book.price = book_data["price"]
+                book.used_price = book_data["used_price"]
+                book.is_required = book_data["required"]
+                book.notes = book_data["notes"]
+                book.cover_image_url = book_data["cover_image"]
+                book.authors = []
 
-                    for author_data in book_data["authors"]:
-                        author = BookAuthor()
-                        author.name = author_data["name"]
-                        book.authors.append(author)
+                for author_data in book_data["authors"]:
+                    author = BookAuthor()
+                    author.name = author_data["name"]
+                    book.authors.append(author)
 
                     books.append(book)
         return books
@@ -62,15 +63,17 @@ class Bookstore(object):
 
         books = {}
 
-        for sln in slns:
-            try:
-                section_books = self.get_books_by_quarter_sln(
-                    schedule.term.quarter, sln
-                )
-                books[sln] = section_books
-            except DataFailureException:
-                # do nothing if bookstore doesn't have sln
-                pass
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            results = executor.map(
+                    self.get_books_by_quarter_sln,
+                    [schedule.term.quarter] * len(slns),
+                    slns
+                    )
+            executor.shutdown(wait=True)
+
+        for result, sln in zip(results, slns):
+            books[sln] = result
+
         return books
 
     def get_url_for_schedule(self, schedule):
