@@ -24,10 +24,12 @@ class Bookstore(object):
             quarter,
             self._get_sln_string(sln),
             )
-        response = DAO.getURL(url, {"Accept": "application/json"})
+        response = DAO.getURL(url, {"Accept": "application/json", "Accept-Charset": "utf-8"})
+
         if response.status != 200:
             raise DataFailureException(url, response.status, response.data)
 
+        utf_data = response.data.decode("iso-8859-1").encode('utf8')
         data = json.loads(response.data)
 
         books = []
@@ -85,7 +87,7 @@ class Bookstore(object):
         url = self._get_url(schedule)
         if url is None:
             return None
-        response = DAO.getURL(url, {"Accept": "application/json"})
+        response = DAO.getURL(url, {"Accept": "application/json", "Accept-Charset": "utf-8"})
         if response.status != 200:
             raise DataFailureException(url, response.status, response.data)
 
