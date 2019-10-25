@@ -11,6 +11,7 @@ import re
 
 
 BOOK_PREFIX = "http://uw-seattle.verbacompare.com/m?section_id="
+API_ENDPOINT = "/uw/json_utf8.ubs"
 DAO = Bookstore_DAO()
 
 
@@ -20,7 +21,7 @@ class Bookstore(object):
     """
 
     def get_books_by_quarter_sln(self, quarter, sln):
-        url = "/myuw/myuw_mobile_beta.ubs?quarter=%s&%s&returnlink=t" % (
+        url = API_ENDPOINT + "?quarter=%s&%s&returnlink=t" % (
             quarter,
             self._get_sln_string(sln),
             )
@@ -40,6 +41,8 @@ class Bookstore(object):
                 book.isbn = book_data["isbn"]
                 book.title = book_data["title"]
                 book.price = book_data["price"]
+                book.lowest_price = book_data["lowest_price"]
+                book.highest_price = book_data["highest_price"]
                 book.used_price = book_data["used_price"]
                 book.is_required = book_data["required"]
                 book.notes = book_data["notes"]
@@ -97,7 +100,7 @@ class Bookstore(object):
     def _get_url(self, schedule):
         sln_string = self._get_slns_string(schedule)
         if sln_string:
-            url = "/myuw/myuw_mobile_beta.ubs?quarter=%s&%s&returnlink=t" % (
+            url = API_ENDPOINT + "?quarter=%s&%s&returnlink=t" % (
                 schedule.term.quarter,
                 sln_string,
             )
