@@ -6,6 +6,8 @@ class Book(Model):
     isbn = models.CharField(max_length=15)
     title = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=7, decimal_places=2)
+    lowest_price = models.DecimalField(highest_digits=7, decimal_places=2)
+    highest_price = models.DecimalField(highest_digits=7, decimal_places=2)
     used_price = models.DecimalField(max_digits=7, decimal_places=2)
     is_required = models.NullBooleanField()
     notes = models.TextField()
@@ -18,6 +20,8 @@ class Book(Model):
             'authors': [],
             'price': self.price,
             'used_price': self.used_price,
+            'lowest_price': self.lowest_price,
+            'highest_price': self.highest_price,
             'is_required': self.is_required,
             'notes': self.notes,
             'cover_image_url': self.cover_image_url,
