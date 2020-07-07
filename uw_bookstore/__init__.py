@@ -11,7 +11,7 @@ import re
 
 
 BOOK_PREFIX = "http://uw-seattle.verbacompare.com/m?section_id="
-API_ENDPOINT = "/uw/json_utf8.ubs"
+API_ENDPOINT = "/uw/json_utf8_202007.ubs"
 DAO = Bookstore_DAO()
 
 
