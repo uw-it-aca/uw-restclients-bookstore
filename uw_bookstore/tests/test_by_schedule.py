@@ -1,11 +1,11 @@
-# Copyright 2021 UW-IT, University of Washington
+# Copyright 2023 UW-IT, University of Washington
 # SPDX-License-Identifier: Apache-2.0
 
-import logging
+import mock
 from unittest import skipIf, TestCase
 from uw_bookstore import Bookstore
-from uw_sws.term import get_current_term,\
-    get_term_by_year_and_quarter
+from uw_sws.term import (
+    get_current_term, get_term_by_year_and_quarter)
 from uw_sws.registration import get_schedule_by_regid_and_term
 from restclients_core.exceptions import DataFailureException
 from uw_bookstore.util import fdao_bookstore_override
@@ -44,6 +44,18 @@ class BookstoreScheduleTest(TestCase):
             'FE36CCB8F66711D5BE060004AC494F31', term,
             transcriptable_course="all")
         self.assertEquals(len(schedule.sections), 1)
+        schedule_books = books.get_books_for_schedule(schedule)
+        self.assertEquals(len(schedule_books), 0)
+
+    @mock.patch('uw_sws.models.Section.is_campus_tacoma')
+    def test_get_books_of_uwt_courses(self, mock):
+        # exclude UWT courses
+        mock.return_value = True
+        books = Bookstore()
+        term = get_term_by_year_and_quarter(2013, 'spring')
+        schedule = get_schedule_by_regid_and_term(
+            "12345678901234567890123456789012", term)
+        self.assertEquals(len(schedule.sections), 9)
         schedule_books = books.get_books_for_schedule(schedule)
         self.assertEquals(len(schedule_books), 0)
 

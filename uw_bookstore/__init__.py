@@ -1,4 +1,4 @@
-# Copyright 2021 UW-IT, University of Washington
+# Copyright 2023 UW-IT, University of Washington
 # SPDX-License-Identifier: Apache-2.0
 
 """
@@ -116,9 +116,10 @@ class Bookstore(object):
     def _get_slns(self, schedule):
         slns = []
         for section in schedule.sections:
-            sln = section.sln
-            if sln and sln not in slns:
-                slns.append(sln)
+            if not section.is_campus_tacoma():
+                sln = section.sln
+                if sln and sln not in slns:
+                    slns.append(sln)
         return slns
 
     def _get_slns_string(self, schedule):
