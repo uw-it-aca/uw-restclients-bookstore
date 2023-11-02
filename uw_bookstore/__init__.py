@@ -65,9 +65,10 @@ class Bookstore(object):
         Returns a dictionary of data.  SLNs are the keys, an array of Book
         objects are the values.
         """
-        slns = self._get_slns(schedule)
-
         books = {}
+        slns = self._get_slns(schedule)
+        if len(slns) == 0:
+            return books
 
         with ThreadPoolExecutor(max_workers=10) as executor:
             results = executor.map(
