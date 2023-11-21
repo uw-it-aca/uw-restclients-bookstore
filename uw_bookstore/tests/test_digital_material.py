@@ -19,7 +19,7 @@ class IACoursesStatusTest(TestCase):
         self.assertIsNotNone(tiacs.json_data())
         self.assertIsNotNone(str(tiacs))
         self.assertIsNotNone(tiacs.ia_courses)
-        self.assertEqual(len(tiacs.ia_courses.keys()), 3)
+        self.assertEqual(len(tiacs.ia_courses.keys()), 4)
         self.assertEqual(
             tiacs.ia_courses[13830].json_data(),
             {
@@ -36,6 +36,7 @@ class IACoursesStatusTest(TestCase):
                 }
             }
         )
+        self.assertEqual(tiacs.ia_courses[11646].digital_items, {})
         self.assertIsNotNone(str(tiacs.ia_courses[13833]))
         self.assertIsNotNone(
             str(tiacs.ia_courses[13833].digital_items['9781256396362']))

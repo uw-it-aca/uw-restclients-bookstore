@@ -41,6 +41,11 @@
             "Price": 24.26
           }
         ]
+      },
+      {
+        "SLN": 11646,
+        "BookstoreCourseID": 1000158,
+        "DigitalItems": []
       }
     ],
     "BalanceToPay": 219.85,
