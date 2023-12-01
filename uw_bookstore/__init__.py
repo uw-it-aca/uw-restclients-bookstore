@@ -10,8 +10,6 @@ from restclients_core.exceptions import DataFailureException
 from uw_bookstore.models import Book, BookAuthor
 from concurrent.futures import ThreadPoolExecutor
 import json
-import re
-
 
 BOOK_PREFIX = "http://uw-seattle.verbacompare.com/m?section_id="
 API_ENDPOINT = "/uw/json_utf8_202007.ubs"
@@ -24,10 +22,10 @@ class Bookstore(object):
     """
 
     def get_books_by_quarter_sln(self, quarter, sln):
-        url = API_ENDPOINT + "?quarter=%s&%s&returnlink=t" % (
+        url = "{}?quarter={}&{}&returnlink=t".format(
+            API_ENDPOINT,
             quarter,
-            self._get_sln_string(sln),
-            )
+            self._get_sln_string(sln))
         response = DAO.getURL(url, {"Accept": "application/json"})
         if response.status != 200:
             raise DataFailureException(url, response.status, response.data)
@@ -104,15 +102,16 @@ class Bookstore(object):
     def _get_url(self, schedule):
         sln_string = self._get_slns_string(schedule)
         if sln_string:
-            url = API_ENDPOINT + "?quarter=%s&%s&returnlink=t" % (
+            url = "{}?quarter={}&{}&returnlink=t".format(
+                API_ENDPOINT,
                 schedule.term.quarter,
-                sln_string,
+                sln_string
             )
             return url
         return None
 
     def _get_sln_string(self, sln):
-        return "sln1=%d" % sln
+        return "sln1={}".format(sln)
 
     def _get_slns(self, schedule):
         slns = []
@@ -129,7 +128,7 @@ class Bookstore(object):
             slns = []
             sln_count = 1
             for sln in valid_slns:
-                slns.append("sln%d=%d" % (sln_count, sln))
+                slns.append("sln{}={}".format(sln_count, sln))
                 sln_count += 1
             sln_string = "&".join(slns)
             return sln_string
