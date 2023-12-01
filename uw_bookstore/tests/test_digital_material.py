@@ -18,6 +18,10 @@ class IACoursesStatusTest(TestCase):
         self.maxDiff = None
         self.assertIsNotNone(tiacs.json_data())
         self.assertIsNotNone(str(tiacs))
+        self.assertEqual(tiacs.balance, 219.85)
+        self.assertTrue(len(tiacs.bookstore_checkout_url) > 0)
+        self.assertTrue(len(tiacs.bookstore_digital_material_url) > 0)
+        self.assertIsNotNone(tiacs.payment_due_day)
         self.assertIsNotNone(tiacs.ia_courses)
         self.assertEqual(len(tiacs.ia_courses.keys()), 4)
         self.assertEqual(

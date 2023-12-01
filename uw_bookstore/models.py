@@ -130,7 +130,7 @@ class TermIACourse(Model):
         self.payment_due_day = str_to_date(data.get("PaymentDeadline"))
         self.bookstore_digital_material_url = (
             data.get("BookstoreDigitalMaterialLink"))
-        self.bookstore_checkout_url = data.get("BookstoreCheckoutLink")
+        self.bookstore_checkout_url = data.get("BookstoreCheckOutLink")
         self.last_updated = str_to_datetime(data.get("LastUpdated"))
         self.ia_courses = {}
         iacs = data.get("IACourses")
