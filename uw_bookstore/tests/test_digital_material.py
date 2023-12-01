@@ -13,7 +13,7 @@ class IACoursesStatusTest(TestCase):
     def test_get(self):
         ias = IACoursesStatus()
         result = ias.get_iacourse_status('12345678901234567890123456789012')
-        self.assertEqual(len(result), 1)
+        self.assertEqual(len(result.keys()), 2)
         tiacs = result.get("spring2013")
         self.maxDiff = None
         self.assertIsNotNone(tiacs.json_data())
@@ -44,6 +44,9 @@ class IACoursesStatusTest(TestCase):
         self.assertIsNotNone(str(tiacs.ia_courses[13833]))
         self.assertIsNotNone(
             str(tiacs.ia_courses[13833].digital_items['9781256396362']))
+
+        tiacs1 = result.get("summer2013")
+        self.assertEqual(tiacs1.balance, 99.00)
 
         self.assertRaises(
             DataFailureException, ias.get_iacourse_status, '00000')
