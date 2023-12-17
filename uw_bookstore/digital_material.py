@@ -6,12 +6,13 @@ This is the interface for interacting with the UW Bookstore's book service.
 """
 
 import json
+import logging
 from uw_bookstore import DAO, Bookstore
 from uw_bookstore.models import TermIACourse
 from restclients_core.exceptions import DataFailureException
 
-
 API_ENDPOINT = "/uw/iacourse_status.json?regid="
+logger = logging.getLogger(__name__)
 
 
 class IACoursesStatus(Bookstore):
@@ -19,6 +20,9 @@ class IACoursesStatus(Bookstore):
     def get_iacourse_status(self, regid):
         url = "{}{}".format(API_ENDPOINT, regid)
         response = DAO.getURL(url, {"Accept": "application/json"})
+        if response:
+            logger.debug("get_iacourse_status {} =={}==> {}".format(
+                url, response.status, response.data))
         if response.status != 200:
             raise DataFailureException(url, response.status, response.data)
 

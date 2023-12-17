@@ -5,12 +5,14 @@
 This is the interface for interacting with the UW Bookstore's book service.
 """
 
+import logging
 from uw_bookstore.dao import Bookstore_DAO
 from restclients_core.exceptions import DataFailureException
 from uw_bookstore.models import Book, BookAuthor
 from concurrent.futures import ThreadPoolExecutor
 import json
 
+logger = logging.getLogger(__name__)
 BOOK_PREFIX = "http://uw-seattle.verbacompare.com/m?section_id="
 API_ENDPOINT = "/uw/json_utf8_202007.ubs"
 DAO = Bookstore_DAO()
@@ -27,6 +29,9 @@ class Bookstore(object):
             quarter,
             self._get_sln_string(sln))
         response = DAO.getURL(url, {"Accept": "application/json"})
+        if response:
+            logger.debug("get_books_by_quarter_sln {} =={}==> {}".format(
+                url, response.status, response.data))
         if response.status != 200:
             raise DataFailureException(url, response.status, response.data)
 
