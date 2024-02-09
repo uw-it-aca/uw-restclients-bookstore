@@ -73,8 +73,7 @@ jobs:
           coverage run ${APP_NAME}/test.py -v
 
       - name: Report Test Coverage
-      if: |
-          matrix.python-version == env.COVERAGE_PYTHON_VERSION
+        if: matrix.python-version == env.COVERAGE_PYTHON_VERSION
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
