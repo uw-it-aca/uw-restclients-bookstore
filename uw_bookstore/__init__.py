@@ -38,7 +38,8 @@ class Bookstore(object):
         try:
             data = json.loads(response.data)
         except Exception as ex:
-            raise DataFailureException(url, 543, response.data)
+            raise DataFailureException(
+                url, 543, {'error': ex, 'data': response.data})
 
         books = []
 
