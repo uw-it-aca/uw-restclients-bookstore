@@ -40,7 +40,7 @@ class Bookstore(object):
         except Exception as ex:
             raise DataFailureException(
                 url, response.status,
-                {'Excetion': ex, 'response.data': response.data})
+                {'exception': ex, 'data': response.data})
 
         books = []
 
