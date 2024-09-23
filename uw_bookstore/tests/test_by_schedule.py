@@ -26,6 +26,8 @@ class BookstoreScheduleTest(TestCase):
             books.get_books_by_quarter_sln('autumn', 00000)
         with self.assertRaises(DataFailureException):
             books.get_books_by_quarter_sln('autumn', 0)
+        with self.assertRaises(DataFailureException):
+            books.get_books_by_quarter_sln('autumn', 10000)
 
     def test_get_books_by_schedule(self):
         books = Bookstore()
