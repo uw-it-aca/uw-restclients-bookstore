@@ -26,6 +26,8 @@ class BookstoreScheduleTest(TestCase):
             books.get_books_by_quarter_sln('autumn', 00000)
         with self.assertRaises(DataFailureException):
             books.get_books_by_quarter_sln('autumn', 0)
+        with self.assertRaises(DataFailureException):
+            books.get_books_by_quarter_sln('autumn', 10000)
 
     def test_get_books_by_schedule(self):
         books = Bookstore()
@@ -34,7 +36,7 @@ class BookstoreScheduleTest(TestCase):
             'AA36CCB8F66711D5BE060004AC494FFE', term)
         schedule_books = books.get_books_for_schedule(schedule)
 
-        self.assertEquals(len(schedule_books), 2)
+        self.assertEqual(len(schedule_books), 2)
         self.assertEqual(len(schedule_books[13833]), 0)
         self.assertEqual(len(schedule_books[13830]), 2)
 
@@ -43,9 +45,9 @@ class BookstoreScheduleTest(TestCase):
         schedule = get_schedule_by_regid_and_term(
             'FE36CCB8F66711D5BE060004AC494F31', term,
             transcriptable_course="all")
-        self.assertEquals(len(schedule.sections), 1)
+        self.assertEqual(len(schedule.sections), 1)
         schedule_books = books.get_books_for_schedule(schedule)
-        self.assertEquals(len(schedule_books), 0)
+        self.assertEqual(len(schedule_books), 0)
 
     @mock.patch('uw_sws.models.Section.is_campus_tacoma')
     def test_get_books_of_uwt_courses(self, mock):
@@ -55,9 +57,9 @@ class BookstoreScheduleTest(TestCase):
         term = get_term_by_year_and_quarter(2013, 'spring')
         schedule = get_schedule_by_regid_and_term(
             "12345678901234567890123456789012", term)
-        self.assertEquals(len(schedule.sections), 9)
+        self.assertEqual(len(schedule.sections), 9)
         schedule_books = books.get_books_for_schedule(schedule)
-        self.assertEquals(len(schedule_books), 0)
+        self.assertEqual(len(schedule_books), 0)
 
     def test_verba_link(self):
         books = Bookstore()
@@ -68,7 +70,7 @@ class BookstoreScheduleTest(TestCase):
 
         verba_link = books.get_url_for_schedule(schedule)
 
-        self.assertEquals(
+        self.assertEqual(
             ('http://www.ubookstore.com/adoption-search-results?' +
              'ccid=9335,10822'),
             verba_link)
@@ -96,10 +98,10 @@ class BookstoreScheduleTest(TestCase):
 
         verba_link = books.get_url_for_schedule(schedule)
 
-        self.assertEquals(
+        self.assertEqual(
             verba_link,
             'http://www.ubookstore.com/adoption-search-results' +
             '?ccid=9335,10822')
 
         schedule_books = books.get_books_for_schedule(schedule)
-        self.assertEquals(len(schedule_books), 2)
+        self.assertEqual(len(schedule_books), 2)
