@@ -9,7 +9,7 @@ import logging
 from uw_bookstore.dao import Bookstore_DAO
 from restclients_core.exceptions import DataFailureException
 from uw_bookstore.models import Book, BookAuthor
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 
 logger = logging.getLogger(__name__)
@@ -28,17 +28,17 @@ class Bookstore(object):
             API_ENDPOINT,
             quarter,
             self._get_sln_string(sln))
-        logger.debug(f"get_books_by_quarter_sln {url}")
+        logger.info(f"get_books_by_quarter_sln {url}")
         response = DAO.getURL(url, {"Accept": "application/json"})
         if response:
-            logger.debug("get_books_by_quarter_sln {} =={}==> {}".format(
-                url, response.status, response.data))
-        if response.status != 200:
+            logger.info(f"{url} ==> {response.status}==> {response.data}")
+        if not response or response.status != 200:
             raise DataFailureException(url, response.status, response.data)
 
         try:
             data = json.loads(response.data)
         except Exception as ex:
+            logger.error(f"{url} ==> {response.data} ==> {ex}")
             raise DataFailureException(
                 url, response.status,
                 {'exception': ex, 'data': response.data})
@@ -78,18 +78,25 @@ class Bookstore(object):
         slns = self._get_slns(schedule)
         if len(slns) == 0:
             return books
-
+        quarter = schedule.term.quarter
         with ThreadPoolExecutor(max_workers=10) as executor:
-            results = executor.map(
-                    self.get_books_by_quarter_sln,
-                    [schedule.term.quarter] * len(slns),
-                    slns
-                    )
-            executor.shutdown(wait=True)
+            """
+            task_to_sln = {
+                executor.submit(
+                    self.get_books_by_quarter_sln, quarter, sln): sln
+                for sln in slns
+            }
+            """
+            task_to_sln = {}
+            for sln in slns:
+                logger.info(f"Submitting task for {sln}")
+                task = executor.submit(self.get_books_by_quarter_sln, quarter, sln)
+                task_to_sln[task] = sln
 
-        for result, sln in zip(results, slns):
-            books[sln] = result
-
+            for task in as_completed(task_to_sln):
+                sln = task_to_sln[task]
+                books[sln] = task.result()
+                logger.info(f"Completed task for {sln}")
         return books
 
     def get_url_for_schedule(self, schedule):
