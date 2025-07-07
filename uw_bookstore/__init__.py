@@ -64,8 +64,8 @@ class Bookstore(object):
                     author = BookAuthor()
                     author.name = author_data["name"]
                     book.authors.append(author)
-
-                    books.append(book)
+                logger.debug(str(book))
+                books.append(book)
         return books
 
     def get_books_for_schedule(self, schedule):
