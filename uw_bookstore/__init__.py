@@ -1,4 +1,4 @@
-# Copyright 2024 UW-IT, University of Washington
+# Copyright 2025 UW-IT, University of Washington
 # SPDX-License-Identifier: Apache-2.0
 
 """
@@ -64,8 +64,8 @@ class Bookstore(object):
                     author = BookAuthor()
                     author.name = author_data["name"]
                     book.authors.append(author)
-
-                    books.append(book)
+                logger.debug(str(book))
+                books.append(book)
         return books
 
     def get_books_for_schedule(self, schedule):
