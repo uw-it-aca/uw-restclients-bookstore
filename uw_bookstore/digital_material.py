@@ -26,7 +26,13 @@ class IACoursesStatus(Bookstore):
         if response.status != 200:
             raise DataFailureException(url, response.status, response.data)
 
-        resp_json = json.loads(response.data)
+        try:
+            resp_json = json.loads(response.data)
+        except Exception as ex:
+            raise DataFailureException(
+                url, response.status,
+                {'exception': ex, 'data': response.data})
+
         terms_iacourses = {}
         if len(resp_json):
             for item in resp_json:

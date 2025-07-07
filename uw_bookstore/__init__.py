@@ -35,7 +35,12 @@ class Bookstore(object):
         if response.status != 200:
             raise DataFailureException(url, response.status, response.data)
 
-        data = json.loads(response.data)
+        try:
+            data = json.loads(response.data)
+        except Exception as ex:
+            raise DataFailureException(
+                url, response.status,
+                {'exception': ex, 'data': response.data})
 
         books = []
 
