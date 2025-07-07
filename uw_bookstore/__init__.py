@@ -90,7 +90,8 @@ class Bookstore(object):
             task_to_sln = {}
             for sln in slns:
                 logger.info(f"Submitting task for {sln}")
-                task = executor.submit(self.get_books_by_quarter_sln, quarter, sln)
+                task = executor.submit(
+                    self.get_books_by_quarter_sln, quarter, sln)
                 task_to_sln[task] = sln
 
             for task in as_completed(task_to_sln):
