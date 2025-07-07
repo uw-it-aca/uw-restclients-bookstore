@@ -28,6 +28,7 @@ class Bookstore(object):
             API_ENDPOINT,
             quarter,
             self._get_sln_string(sln))
+        logger.debug(f"get_books_by_quarter_sln {url}")
         response = DAO.getURL(url, {"Accept": "application/json"})
         if response:
             logger.debug("get_books_by_quarter_sln {} =={}==> {}".format(
