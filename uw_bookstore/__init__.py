@@ -29,7 +29,7 @@ class Bookstore(object):
         if not quarter or not sln_set:
             return None
         books = {}
-        logger.debug(f"get_textbooks for {quarter} slns: {sln_set}")
+        logger.debug(f"get_textbooks for {quarter} {sln_set}")
         with ThreadPoolExecutor(max_workers=13) as executor:
             task_to_sln = {
                 executor.submit(
