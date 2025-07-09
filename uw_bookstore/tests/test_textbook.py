@@ -24,6 +24,8 @@ class BookstoreTest(TestCase):
             books.get_books_by_quarter_sln('autumn', 0)
         with self.assertRaises(DataFailureException):
             books.get_books_by_quarter_sln('autumn', 10000)
+        self.assertEqual(
+            books.get_books_by_quarter_sln("autumn", 10001), [])
 
     def test_get_books(self):
         books = Bookstore()
@@ -47,4 +49,4 @@ class BookstoreTest(TestCase):
             verba_link)
 
         with self.assertRaises(DataFailureException):
-            books.get_textbooks("autumn", {10001, 19187})
+            books.get_textbooks("autumn", {10002, 19187})
