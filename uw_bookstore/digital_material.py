@@ -20,9 +20,7 @@ class IACoursesStatus(Bookstore):
     def get_iacourse_status(self, regid):
         url = "{}{}".format(API_ENDPOINT, regid)
         response = DAO.getURL(url, {"Accept": "application/json"})
-        if response:
-            logger.debug("get_iacourse_status {} =={}==> {}".format(
-                url, response.status, response.data))
+        logger.debug(f"{url} ==> {response.status} ==> {response.data}")
         if response.status != 200:
             raise DataFailureException(url, response.status, response.data)
 
