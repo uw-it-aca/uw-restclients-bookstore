@@ -46,7 +46,7 @@ class Bookstore(object):
     def get_books_by_quarter_sln(self, quarter, sln):
         url = f"{API_ENDPOINT}?quarter={quarter}&sln1={sln}"
         logger.debug(f"get_books {url}")
-        data = self._get_url(url)
+        data = self.get_url(url)
         books = []
         value = data.get(str(sln))
         if value is None:
@@ -80,7 +80,7 @@ class Bookstore(object):
         url = "{}?quarter={}&{}&returnlink=t".format(
             API_ENDPOINT, quarter, sln_string)
         logger.debug(f"get_order_url {quarter} {sln_set} {url}")
-        data = self._get_url(url)
+        data = self.get_url(url)
 
         if "ubsLink" in data:
             return data["ubsLink"][0]["search"]
@@ -94,7 +94,7 @@ class Bookstore(object):
         sln_string = "&".join(slns)
         return sln_string
 
-    def _get_url(self, url):
+    def get_url(self, url):
         response = DAO.getURL(url, {"Accept": "application/json"})
         logger.debug(f"{url} ==> {response.status} ==> {response.data}")
         if response.status != 200:
