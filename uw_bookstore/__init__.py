@@ -29,7 +29,7 @@ class Bookstore(object):
         if not quarter or not sln_set:
             return None
         books = {}
-        logger.debug(f"get_textbooks quarter={quarter} sln_set={sln_set}")
+        logger.debug(f"get_textbooks for {quarter} slns: {sln_set}")
         with ThreadPoolExecutor(max_workers=13) as executor:
             task_to_sln = {
                 executor.submit(
@@ -45,7 +45,7 @@ class Bookstore(object):
 
     def get_books_by_quarter_sln(self, quarter, sln):
         url = f"{API_ENDPOINT}?quarter={quarter}&sln1={sln}"
-        logger.debug(f"get_books_by_quarter_sln {url}")
+        logger.debug(f"get_books {url}")
         data = self._get_url(url)
         books = []
         value = data.get(str(sln))
@@ -68,7 +68,7 @@ class Bookstore(object):
                 author = BookAuthor()
                 author.name = author_data["name"]
                 book.authors.append(author)
-            logger.debug(f"get_books_by_quarter_sln {url} {str(book)}")
+            logger.debug(f"get_books {url} ==> {str(book)}")
             books.append(book)
         return books
 
@@ -79,6 +79,7 @@ class Bookstore(object):
         sln_string = self._get_slns_string(sln_set)
         url = "{}?quarter={}&{}&returnlink=t".format(
             API_ENDPOINT, quarter, sln_string)
+        logger.debug(f"get_order_url {quarter} {sln_set} {url}")
         data = self._get_url(url)
 
         if "ubsLink" in data:
