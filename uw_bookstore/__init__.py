@@ -24,7 +24,12 @@ class Bookstore(object):
 
     def get_textbooks(self, quarter, sln_set):
         """
-        Returns a dictionary of sln to an array of Book objects.
+        Returns a dictionary of
+        {sln: {
+            "books": [],
+            "search_link": url str}}
+        or
+        {sln: {"error": error message}}.
         """
         if not quarter or not sln_set:
             return None
@@ -40,17 +45,23 @@ class Bookstore(object):
             for task in as_completed(task_to_sln):
                 sln = task_to_sln[task]
                 books[sln] = task.result()
-                logger.debug(f"Completed task for {sln}")
+                logger.debug(f"Task for {sln} returned {books[sln]}")
+
         return books
 
     def get_books_by_quarter_sln(self, quarter, sln):
-        url = f"{API_ENDPOINT}?quarter={quarter}&sln1={sln}"
+        url = f"{API_ENDPOINT}?quarter={quarter}&sln1={sln}&returnlink=t"
         logger.debug(f"get_books {url}")
-        data = self.get_url(url)
+        try:
+            data = self.get_url(url)
+        except Exception as ex:
+            logger.error(f"{url}  {ex}")
+            return {"error": str(ex)}
+            # Pass up the error msg of individual sln book fetching
+
+        link = data.get("ubsLink", [{}])[0].get("search")
         books = []
-        value = data.get(str(sln))
-        if value is None:
-            return books
+        value = data.get(str(sln), [])
         for book_data in value:
             book = Book()
             book.isbn = book_data["isbn"]
@@ -63,14 +74,14 @@ class Bookstore(object):
             book.notes = book_data["notes"]
             book.cover_image_url = book_data["cover_image"]
             book.authors = []
-
             for author_data in book_data["authors"]:
                 author = BookAuthor()
                 author.name = author_data["name"]
                 book.authors.append(author)
             logger.debug(f"get_books {url} ==> {str(book)}")
             books.append(book)
-        return books
+
+        return {"books": books, "search_link": link}
 
     def get_order_url(self, quarter, sln_set):
         """
@@ -84,6 +95,8 @@ class Bookstore(object):
 
         if "ubsLink" in data:
             return data["ubsLink"][0]["search"]
+        else:
+            return None
 
     def _get_slns_string(self, sln_set):
         slns = []
@@ -103,7 +116,8 @@ class Bookstore(object):
         try:
             return json.loads(response.data)
         except Exception as ex:
-            logger.error(f"{url} ==> {response.data} ==> {ex}")
+            logger.debug(f"{url} ==> {response.data} ==> {ex}")
             raise DataFailureException(
-                url, response.status, {"exception": ex, "data": response.data}
+                url, 200,
+                {"exception": str(ex), "json-load-data": response.data}
             )
