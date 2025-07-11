@@ -18,7 +18,7 @@ class BookstoreTest(TestCase):
         self.assertEqual(result["books"][0].isbn, '9780878935970')
 
         result = books.get_books_by_quarter_sln("autumn", 10000)
-        self.assertIsNotNone(result.get("error"))
+        self.assertTrue("InvalidData" in result.get("error"))
         result = books.get_books_by_quarter_sln("autumn", 10001)
         self.assertTrue("Status code: 404" in result.get("error"))
 

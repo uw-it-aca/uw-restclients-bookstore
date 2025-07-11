@@ -64,19 +64,19 @@ class Bookstore(object):
         value = data.get(str(sln), [])
         for book_data in value:
             book = Book()
-            book.isbn = book_data["isbn"]
-            book.title = book_data["title"]
-            book.price = book_data["price"]
-            book.lowest_price = book_data["lowest_price"]
-            book.highest_price = book_data["highest_price"]
-            book.used_price = book_data["used_price"]
-            book.is_required = book_data["required"]
-            book.notes = book_data["notes"]
-            book.cover_image_url = book_data["cover_image"]
+            book.isbn = book_data.get("isbn")
+            book.title = book_data.get("title")
+            book.price = book_data.get("price")
+            book.lowest_price = book_data.get("lowest_price")
+            book.highest_price = book_data.get("highest_price")
+            book.used_price = book_data.get("used_price")
+            book.is_required = book_data.get("required")
+            book.notes = book_data.get("notes")
+            book.cover_image_url = book_data.get("cover_image")
             book.authors = []
-            for author_data in book_data["authors"]:
+            for author_data in book_data.get("authors"):
                 author = BookAuthor()
-                author.name = author_data["name"]
+                author.name = author_data.get("name")
                 book.authors.append(author)
             logger.debug(f"get_books {url} ==> {str(book)}")
             books.append(book)
@@ -118,6 +118,4 @@ class Bookstore(object):
         except Exception as ex:
             logger.debug(f"{url} ==> {response.data} ==> {ex}")
             raise DataFailureException(
-                url, 200,
-                {"exception": str(ex), "json-load-data": response.data}
-            )
+                url, 200, f"InvalidData: {ex} {response.data[:100]}")
