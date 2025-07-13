@@ -82,7 +82,8 @@ class Bookstore(object):
         logger.debug(f"get_textbooks for {quarter} {sln_set}")
         with ThreadPoolExecutor(max_workers=13) as executor:
             task_to_sln = {
-                executor.submit(self.get_books_by_quarter_sln, quarter, sln): sln
+                executor.submit(
+                    self.get_books_by_quarter_sln, quarter, sln): sln
                 for sln in sln_set
             }
 
