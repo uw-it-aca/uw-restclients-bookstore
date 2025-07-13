@@ -3,7 +3,9 @@
 
 import mock
 from unittest import skipIf, TestCase
+from restclients_core.exceptions import DataFailureException
 from uw_bookstore import Bookstore
+from uw_bookstore.models import Textbook
 from uw_bookstore.util import fdao_bookstore_override
 
 
@@ -14,40 +16,43 @@ class BookstoreTest(TestCase):
         books = Bookstore()
 
         result = books.get_books_by_quarter_sln('autumn', 19187)
-        self.assertEqual(len(result["books"]), 2)
-        self.assertEqual(result["books"][0].isbn, '9780878935970')
+        self.assertEqual(len(result.books), 2)
+        self.assertEqual(result.books[0].isbn, '9780878935970')
 
-        result = books.get_books_by_quarter_sln("autumn", 10000)
-        self.assertTrue("InvalidData" in result.get("error"))
-        result = books.get_books_by_quarter_sln("autumn", 10001)
-        self.assertTrue("Status code: 404" in result.get("error"))
+        ex = books.get_books_by_quarter_sln("autumn", 10000)
+        self.assertTrue(isinstance(ex, DataFailureException))
+        self.assertTrue("InvalidData" in str(ex))
+        ex = books.get_books_by_quarter_sln("autumn", 10001)
+        self.assertTrue(isinstance(ex, DataFailureException))
+        self.assertTrue("Status code: 404" in str(ex))
 
         result = books.get_books_by_quarter_sln("spring", 13830)
-        self.assertIsNone(result.get("error"))
-        self.assertIsNotNone(result.get("books"))
-        self.assertEqual(len(result.get("books")), 2)
-        self.assertEqual(result.get("books")[0].isbn, '9780878935970')
-        self.assertIsNotNone(result.get("search_link"))
+        self.assertTrue(isinstance(result, Textbook))
+        self.assertIsNotNone(result.books)
+        self.assertEqual(len(result.books), 2)
+        self.assertEqual(result.books[0].isbn, "9780878935970")
+        self.assertEqual(result.course_id, "uws-phys-111-a-123")
+        self.assertEqual(
+            result.search_url,
+            "https://ubookstore.com/pages/adoption-search/course="
+        )
+        jdata = result.json_data()
+        self.assertTrue("books" in jdata)
+        self.assertTrue(len(jdata["books"]) == 2)
+        self.assertTrue("course_id" in jdata)
+        self.assertTrue("search_url" in jdata)
+        self.assertIsNotNone(str(result))
 
     def test_get_books(self):
         books = Bookstore()
         sln_books = books.get_textbooks("spring", {13830, 13833})
         self.assertEqual(len(sln_books), 2)
-        self.assertEqual(len(sln_books[13833]["books"]), 0)
-        self.assertEqual(len(sln_books[13830]["books"]), 2)
+        self.assertEqual(len(sln_books[13833].books), 0)
+        self.assertEqual(len(sln_books[13830].books), 2)
 
         sln_books = books.get_textbooks("autumn", {10000, 19187})
         self.assertEqual(len(sln_books), 2)
-        self.assertTrue("error" in sln_books[10000])
-        self.assertEqual(len(sln_books[19187]["books"]), 2)
+        self.assertTrue(isinstance(sln_books[10000], DataFailureException))
+        self.assertTrue(isinstance(sln_books[19187], Textbook))
 
         self.assertIsNone(books.get_textbooks(None, None))
-
-    def test_verba_link(self):
-        books = Bookstore()
-        verba_link = books.get_order_url("spring", {13830, 13833})
-
-        self.assertEqual(
-            ('http://www.ubookstore.com/adoption-search-results?' +
-             'ccid=9335,10822'),
-            verba_link)

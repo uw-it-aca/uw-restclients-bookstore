@@ -8,12 +8,12 @@ This is the interface for interacting with the UW Bookstore's book service.
 import logging
 from uw_bookstore.dao import Bookstore_DAO
 from restclients_core.exceptions import DataFailureException
-from uw_bookstore.models import Book, BookAuthor
+from uw_bookstore.models import Book, BookAuthor, Textbook
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 
 logger = logging.getLogger(__name__)
-API_ENDPOINT = "/uw/json_utf8_202007.ubs"
+API_ENDPOINT = "/uw/json_utf8_202507.ubs"
 DAO = Bookstore_DAO()
 
 
@@ -24,12 +24,7 @@ class Bookstore(object):
 
     def get_textbooks(self, quarter, sln_set):
         """
-        Returns a dictionary of
-        {sln: {
-            "books": [],
-            "search_link": url str}}
-        or
-        {sln: {"error": error message}}.
+        Returns a dictionary of sln to Textbook object or Exception object
         """
         if not quarter or not sln_set:
             return None
@@ -56,10 +51,13 @@ class Bookstore(object):
             data = self.get_url(url)
         except Exception as ex:
             logger.error(f"{url}  {ex}")
-            return {"error": str(ex)}
-            # Pass up the error msg of individual sln book fetching
+            return ex
+            # Pass up the error of individual sln book fetching
 
-        link = data.get("ubsLink", [{}])[0].get("search")
+        return_val = Textbook()
+        link = data.get("ubsLink", {})
+        return_val.course_id = link.get("course_id")
+        return_val.search_url = link.get("search")
         books = []
         value = data.get(str(sln), [])
         for book_data in value:
@@ -80,8 +78,8 @@ class Bookstore(object):
                 book.authors.append(author)
             logger.debug(f"get_books {url} ==> {str(book)}")
             books.append(book)
-
-        return {"books": books, "search_link": link}
+        return_val.books = books
+        return return_val
 
     def get_order_url(self, quarter, sln_set):
         """
