@@ -81,30 +81,6 @@ class Bookstore(object):
         return_val.books = books
         return return_val
 
-    def get_order_url(self, quarter, sln_set):
-        """
-        Returns a dynamic link to verba.
-        """
-        sln_string = self._get_slns_string(sln_set)
-        url = "{}?quarter={}&{}&returnlink=t".format(
-            API_ENDPOINT, quarter, sln_string)
-        logger.debug(f"get_order_url {quarter} {sln_set} {url}")
-        data = self.get_url(url)
-
-        if "ubsLink" in data:
-            return data["ubsLink"][0]["search"]
-        else:
-            return None
-
-    def _get_slns_string(self, sln_set):
-        slns = []
-        sln_count = 1
-        for sln in sln_set:
-            slns.append(f"sln{sln_count}={sln}")
-            sln_count += 1
-        sln_string = "&".join(slns)
-        return sln_string
-
     def get_url(self, url):
         response = DAO.getURL(url, {"Accept": "application/json"})
         logger.debug(f"{url} ==> {response.status} ==> {response.data}")
