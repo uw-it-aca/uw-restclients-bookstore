@@ -22,28 +22,6 @@ class Bookstore(object):
     Get book information for courses.
     """
 
-    def get_textbooks(self, quarter, sln_set):
-        """
-        Returns a dictionary of sln to Textbook object or Exception object
-        """
-        if not quarter or not sln_set:
-            return None
-        books = {}
-        logger.debug(f"get_textbooks for {quarter} {sln_set}")
-        with ThreadPoolExecutor(max_workers=13) as executor:
-            task_to_sln = {
-                executor.submit(
-                    self.get_books_by_quarter_sln, quarter, sln): sln
-                for sln in sln_set
-            }
-
-            for task in as_completed(task_to_sln):
-                sln = task_to_sln[task]
-                books[sln] = task.result()
-                logger.debug(f"Task for {sln} returned {books[sln]}")
-
-        return books
-
     def get_books_by_quarter_sln(self, quarter, sln):
         url = f"{API_ENDPOINT}?quarter={quarter}&sln1={sln}&returnlink=t"
         logger.debug(f"get_books {url}")
@@ -93,3 +71,24 @@ class Bookstore(object):
             logger.debug(f"{url} ==> {response.data} ==> {ex}")
             raise DataFailureException(
                 url, 200, f"InvalidData: {ex} {response.data[:100]}")
+
+    def get_textbooks(self, quarter, sln_set):
+        """
+        Returns a dictionary of sln to Textbook object or Exception object
+        """
+        if not quarter or not sln_set:
+            return None
+        books = {}
+        logger.debug(f"get_textbooks for {quarter} {sln_set}")
+        with ThreadPoolExecutor(max_workers=13) as executor:
+            task_to_sln = {
+                executor.submit(self.get_books_by_quarter_sln, quarter, sln): sln
+                for sln in sln_set
+            }
+
+            for task in as_completed(task_to_sln):
+                sln = task_to_sln[task]
+                books[sln] = task.result()
+                logger.debug(f"Task for {sln} returned {books[sln]}")
+
+        return books
