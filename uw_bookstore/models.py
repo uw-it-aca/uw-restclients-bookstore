@@ -12,7 +12,8 @@ class Textbook(Model):
     search_url = models.CharField(max_length=255, null=True)
 
     def __init__(self, *args, **kwargs):
-        return super(Textbook, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.books = []
 
     def json_data(self):
         book_json_data = []
@@ -31,15 +32,16 @@ class Book(Model):
     isbn = models.CharField(max_length=20)
     title = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=7, decimal_places=2)
-    lowest_price = models.DecimalField(highest_digits=7, decimal_places=2)
-    highest_price = models.DecimalField(highest_digits=7, decimal_places=2)
+    lowest_price = models.DecimalField(max_digits=7, decimal_places=2)
+    highest_price = models.DecimalField(max_digits=7, decimal_places=2)
     used_price = models.DecimalField(max_digits=7, decimal_places=2)
     is_required = models.NullBooleanField()
     notes = models.TextField()
     cover_image_url = models.CharField(max_length=2048)
 
     def __init__(self, *args, **kwargs):
-        return super(Book, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.authors = []
 
     def json_data(self):
         data = {
