@@ -36,26 +36,26 @@ class Bookstore(object):
             # Pass up the error of individual sln book fetching
 
         books = []
-        for book_data in data.get(str(sln), []):
-            if not book_data:
-                continue
-            book = Book(
-                isbn=book_data.get("isbn"),
-                title=book_data.get("title"),
-                price=book_data.get("price"),
-                lowest_price=book_data.get("lowest_price"),
-                highest_price=book_data.get("highest_price"),
-                used_price=book_data.get("used_price"),
-                is_required=book_data.get("required"),
-                notes=book_data.get("notes"),
-                cover_image_url=book_data.get("cover_image"),
-            )
-            book.authors = [
-                BookAuthor(name=a.get("name"))
-                for a in book_data.get("authors", [])
-                if a.get("name")
-            ]
-            books.append(book)
+        value = data.get(str(sln), [])
+        if value and isinstance(value, list):
+            for book_data in value:
+                book = Book(
+                    isbn=book_data.get("isbn"),
+                    title=book_data.get("title"),
+                    price=book_data.get("price"),
+                    lowest_price=book_data.get("lowest_price"),
+                    highest_price=book_data.get("highest_price"),
+                    used_price=book_data.get("used_price"),
+                    is_required=book_data.get("required"),
+                    notes=book_data.get("notes"),
+                    cover_image_url=book_data.get("cover_image"),
+                )
+                book.authors = [
+                    BookAuthor(name=a.get("name"))
+                    for a in book_data.get("authors", [])
+                    if a.get("name")
+                ]
+                books.append(book)
         link = data.get("ubsLink", {})
         textbook = Textbook(
             course_id=link.get("course_id"),

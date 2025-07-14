@@ -25,6 +25,7 @@ class BookstoreTest(TestCase):
                 "books": []
             },
         )
+        self.assertIsNotNone(str(result))
         result = books.get_books_by_quarter_sln('autumn', 10001)
         self.assertEqual(
             result.json_data(),
@@ -47,12 +48,12 @@ class BookstoreTest(TestCase):
             result.search_url,
             "https://ubookstore.com/pages/adoption-search/course="
         )
+        self.assertIsNotNone(str(result.books[0]))
         jdata = result.json_data()
         self.assertTrue("books" in jdata)
         self.assertTrue(len(jdata["books"]) == 2)
         self.assertTrue("course_id" in jdata)
         self.assertTrue("search_url" in jdata)
-        self.assertIsNotNone(str(result))
 
     def test_get_books(self):
         books = Bookstore()
