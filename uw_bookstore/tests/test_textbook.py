@@ -14,15 +14,25 @@ class BookstoreTest(TestCase):
 
     def test_get_bookby_quarter_sln(self):
         books = Bookstore()
-
-        result = books.get_books_by_quarter_sln('autumn', 19187)
-        self.assertEqual(len(result.books), 2)
-        self.assertEqual(result.books[0].isbn, '9780878935970')
+        # self.maxDiff = None
+        result = books.get_books_by_quarter_sln("spring", 13833)
+        self.assertEqual(
+            result.json_data(),
+            {
+                "course_id": "uws-phys-111-c-123",
+                "search_url": "https://ubookstore.com/pages/adoption-search/course=",
+                "books": []
+            },
+        )
+        result = books.get_books_by_quarter_sln('autumn', 10001)
+        self.assertEqual(
+            result.json_data(), 
+            {"course_id": None, "search_url": None, "books": []})
 
         ex = books.get_books_by_quarter_sln("autumn", 10000)
         self.assertTrue(isinstance(ex, DataFailureException))
         self.assertTrue("InvalidData" in str(ex))
-        ex = books.get_books_by_quarter_sln("autumn", 10001)
+        ex = books.get_books_by_quarter_sln("autumn", 10009)
         self.assertTrue(isinstance(ex, DataFailureException))
         self.assertTrue("Status code: 404" in str(ex))
 
