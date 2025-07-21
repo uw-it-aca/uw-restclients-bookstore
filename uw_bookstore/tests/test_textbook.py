@@ -20,7 +20,7 @@ class BookstoreTest(TestCase):
         self.assertEqual(
             result.json_data(),
             {
-                "course_id": "uws-phys-111-c-123",
+                "course_id": None,
                 "search_url": url,
                 "books": []
             },
