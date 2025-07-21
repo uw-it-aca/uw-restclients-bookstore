@@ -55,6 +55,14 @@ class BookstoreTest(TestCase):
         self.assertTrue("course_id" in jdata)
         self.assertTrue("search_url" in jdata)
 
+        result = books.get_books_by_quarter_sln("autumn", 19187)
+        self.assertTrue(isinstance(result, Textbook))
+        self.assertIsNotNone(result.books)
+        self.assertEqual(len(result.books), 2)
+        self.assertEqual(len(result.books[0].authors), 2)
+        self.assertEqual(result.books[0].authors[0].name, "Groom1")
+        self.assertEqual(result.books[0].authors[1].name, "Groom2")
+
     def test_get_books(self):
         books = Bookstore()
         sln_books = books.get_textbooks("spring", {13830, 13833})
