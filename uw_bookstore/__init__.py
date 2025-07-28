@@ -1,9 +1,6 @@
 # Copyright 2025 UW-IT, University of Washington
 # SPDX-License-Identifier: Apache-2.0
 
-"""
-This interacts with the UW Bookstore's book service.
-"""
 
 import logging
 from uw_bookstore.dao import Bookstore_DAO
@@ -19,7 +16,7 @@ DAO = Bookstore_DAO()
 
 class Bookstore(object):
     """
-    Get textbook information for courses.
+    Get textbook requirements for courses.
     """
 
     def get_books_by_quarter_sln(self, quarter, sln):
@@ -74,7 +71,7 @@ class Bookstore(object):
         try:
             return json.loads(response.data)
         except Exception as ex:
-            logger.debug(f"{url} ==> {response.data} ==> {ex}")
+            logger.debug(f"{url} ==> {ex} ==> {response.data}")
             raise DataFailureException(
                 url, 200, f"InvalidData: {ex} {response.data[:100]}")
 
