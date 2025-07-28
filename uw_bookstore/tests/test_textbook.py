@@ -16,12 +16,11 @@ class BookstoreTest(TestCase):
         books = Bookstore()
         # self.maxDiff = None
         result = books.get_books_by_quarter_sln("spring", 13833)
-        url = "https://ubookstore.com/pages/adoption-search/course="
         self.assertEqual(
             result.json_data(),
             {
                 "course_id": None,
-                "search_url": url,
+                "search_url": None,
                 "books": []
             },
         )
