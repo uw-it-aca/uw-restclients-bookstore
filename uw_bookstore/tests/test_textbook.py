@@ -29,13 +29,14 @@ class BookstoreTest(TestCase):
         self.assertEqual(
             result.json_data(),
             {"course_id": None, "search_url": None, "books": []})
-
-        ex = books.get_books_by_quarter_sln("autumn", 10000)
-        self.assertTrue(isinstance(ex, DataFailureException))
-        self.assertTrue("InvalidData" in str(ex))
-        ex = books.get_books_by_quarter_sln("autumn", 10009)
-        self.assertTrue(isinstance(ex, DataFailureException))
-        self.assertTrue("Status code: 404" in str(ex))
+        self.assertRaises(
+            DataFailureException,
+            books.get_books_by_quarter_sln, "autumn", 10000
+        )
+        self.assertRaises(
+            DataFailureException,
+            books.get_books_by_quarter_sln, "autumn", 10009
+        )
 
         result = books.get_books_by_quarter_sln("spring", 13830)
         self.assertTrue(isinstance(result, Textbook))
@@ -74,4 +75,4 @@ class BookstoreTest(TestCase):
         self.assertTrue(isinstance(sln_books[10000], DataFailureException))
         self.assertTrue(isinstance(sln_books[19187], Textbook))
 
-        self.assertIsNone(books.get_textbooks(None, None))
+        self.assertEqual(books.get_textbooks(None, None), {})
