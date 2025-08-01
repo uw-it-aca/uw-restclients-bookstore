@@ -7,16 +7,41 @@ from restclients_core.models import Model
 from dateutil.parser import parse
 
 
+class Textbook(Model):
+    course_id = models.CharField(max_length=50, null=True)
+    search_url = models.CharField(max_length=255, null=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.books = []
+
+    def json_data(self):
+        book_json_data = []
+        for book in self.books:
+            book_json_data.append(book.json_data())
+        return {
+            "course_id": self.course_id,
+            "search_url": self.search_url,
+            "books": book_json_data}
+
+    def __str__(self):
+        return json.dumps(self.json_data())
+
+
 class Book(Model):
     isbn = models.CharField(max_length=20)
     title = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=7, decimal_places=2)
-    lowest_price = models.DecimalField(highest_digits=7, decimal_places=2)
-    highest_price = models.DecimalField(highest_digits=7, decimal_places=2)
+    lowest_price = models.DecimalField(max_digits=7, decimal_places=2)
+    highest_price = models.DecimalField(max_digits=7, decimal_places=2)
     used_price = models.DecimalField(max_digits=7, decimal_places=2)
     is_required = models.NullBooleanField()
     notes = models.TextField()
     cover_image_url = models.CharField(max_length=2048)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.authors = []
 
     def json_data(self):
         data = {

@@ -18,20 +18,8 @@ logger = logging.getLogger(__name__)
 class IACoursesStatus(Bookstore):
 
     def get_iacourse_status(self, regid):
-        url = "{}{}".format(API_ENDPOINT, regid)
-        response = DAO.getURL(url, {"Accept": "application/json"})
-        if response:
-            logger.debug("get_iacourse_status {} =={}==> {}".format(
-                url, response.status, response.data))
-        if response.status != 200:
-            raise DataFailureException(url, response.status, response.data)
-
-        try:
-            resp_json = json.loads(response.data)
-        except Exception as ex:
-            raise DataFailureException(
-                url, response.status,
-                {'exception': ex, 'data': response.data})
+        url = f"{API_ENDPOINT}{regid}"
+        resp_json = self.get_url(url)
 
         terms_iacourses = {}
         if len(resp_json):
