@@ -15,13 +15,26 @@ DAO = Bookstore_DAO()
 
 
 class Bookstore(object):
-    """
-    Get textbook requirements for courses.
-    """
+
+    def get_url(self, url):
+        """
+        url: str -> json-data or DataFailureException
+        """
+        response = DAO.getURL(url, {"Accept": "application/json"})
+        logger.debug(f"{url} ==> {response.status} ==> {response.data}")
+        if response.status != 200:
+            raise DataFailureException(url, response.status, response.data)
+
+        try:
+            return json.loads(response.data)
+        except Exception as ex:
+            logger.debug(f"{url} ==> {ex} ==> {response.data}")
+            raise DataFailureException(
+                url, 200, f"InvalidData: {ex} {response.data[:100]}")
 
     def get_books_by_quarter_sln(self, quarter, sln):
         """
-        quarter: str, sln: str -> Union[Textbook, Exception]
+        quarter: str, sln: str -> Textbook or DataFailureException
         """
         url = f"{API_ENDPOINT}?quarter={quarter}&sln1={sln}&returnlink=t"
         logger.debug(f"get_books {url}")
@@ -62,23 +75,11 @@ class Bookstore(object):
         logger.debug(f"get_books {url} ==> {str(textbook)}")
         return textbook
 
-    def get_url(self, url):
-        response = DAO.getURL(url, {"Accept": "application/json"})
-        logger.debug(f"{url} ==> {response.status} ==> {response.data}")
-        if response.status != 200:
-            raise DataFailureException(url, response.status, response.data)
-
-        try:
-            return json.loads(response.data)
-        except Exception as ex:
-            logger.debug(f"{url} ==> {ex} ==> {response.data}")
-            raise DataFailureException(
-                url, 200, f"InvalidData: {ex} {response.data[:100]}")
-
     def get_textbooks(self, quarter, sln_set):
         """
+        Get textbook requirements for course SLNs.
         quarter: str, sln_set: Set[str])
-        Returns a Dict[sln str, Union[Textbook, Exception]]
+        Returns a Dict[sln str, Union[Textbook, DataFailureException]]
         """
         if not quarter or not sln_set:
             return None
