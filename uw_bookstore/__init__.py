@@ -15,23 +15,31 @@ DAO = Bookstore_DAO()
 
 
 class Bookstore(object):
-    """
-    Get textbook requirements for courses.
-    """
+
+    def get_url(self, url):
+        """
+        url: str -> json-data
+        Raise DataFailureException
+        """
+        response = DAO.getURL(url, {"Accept": "application/json"})
+        if response.status != 200:
+            logger.error(f"{url} => {response.status} => {response.data}")
+            raise DataFailureException(url, response.status, response.data)
+
+        try:
+            return json.loads(response.data)
+        except Exception as ex:
+            logger.error(f"{url} => {ex} ==> {response.data}")
+            raise DataFailureException(
+                url, 200, f"InvalidData: {ex} {response.data[:100]}")
 
     def get_books_by_quarter_sln(self, quarter, sln):
         """
-        quarter: str, sln: str -> Union[Textbook, Exception]
+        quarter: str, sln: str -> Textbook
+        Raise DataFailureException
         """
         url = f"{API_ENDPOINT}?quarter={quarter}&sln1={sln}&returnlink=t"
-        logger.debug(f"get_books {url}")
-        try:
-            data = self.get_url(url)
-        except Exception as ex:
-            logger.error(f"{url}  {ex}")
-            return ex
-            # Pass up the error of individual sln book fetching
-
+        data = self.get_url(url)
         books = []
         value = data.get(str(sln), [])
         if value and isinstance(value, list):
@@ -62,29 +70,17 @@ class Bookstore(object):
         logger.debug(f"get_books {url} ==> {str(textbook)}")
         return textbook
 
-    def get_url(self, url):
-        response = DAO.getURL(url, {"Accept": "application/json"})
-        logger.debug(f"{url} ==> {response.status} ==> {response.data}")
-        if response.status != 200:
-            raise DataFailureException(url, response.status, response.data)
-
-        try:
-            return json.loads(response.data)
-        except Exception as ex:
-            logger.debug(f"{url} ==> {ex} ==> {response.data}")
-            raise DataFailureException(
-                url, 200, f"InvalidData: {ex} {response.data[:100]}")
-
     def get_textbooks(self, quarter, sln_set):
         """
+        Get textbook requirements for course SLNs.
         quarter: str, sln_set: Set[str])
-        Returns a Dict[sln str, Union[Textbook, Exception]]
+        Returns a Dict[sln str, Union[Textbook, DataFailureException]]
         """
         if not quarter or not sln_set:
-            return None
+            return {}
+        logger.debug(f"get_textbooks for {quarter} {sln_set}")
         max_workers = min(len(sln_set), 13)
         books = {}
-        logger.debug(f"get_textbooks for {quarter} {sln_set}")
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             task_to_sln = {
                 executor.submit(
@@ -94,7 +90,11 @@ class Bookstore(object):
 
             for task in as_completed(task_to_sln):
                 sln = task_to_sln[task]
-                books[sln] = task.result()
-                logger.debug(f"Task for {sln} returned {books[sln]}")
-
+                try:
+                    books[sln] = task.result()
+                    logger.debug(f"Task for {sln} ==> {books[sln]}")
+                except Exception as ex:
+                    books[sln] = ex
+                    logger.debug(f"Task for {sln} failed: {ex}")
+                    # Pass up the error but not raise excetion
         return books
