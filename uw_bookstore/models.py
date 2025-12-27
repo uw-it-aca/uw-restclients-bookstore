@@ -139,7 +139,7 @@ class TermIACourse(Model):
     quarter = models.CharField(max_length=6)
     year = models.PositiveSmallIntegerField()
     balance = models.DecimalField(max_digits=7, decimal_places=2)
-    payment_due_day = models.DateField()
+    payment_due_day = models.DateTimeField()
     bookstore_digital_material_url = models.CharField(max_length=255)
     bookstore_checkout_url = models.CharField(max_length=255)
     last_updated = models.DateTimeField()
@@ -152,7 +152,7 @@ class TermIACourse(Model):
         self.year = data.get("Year")
         self.quarter = data.get("Quarter")
         self.balance = data.get("BalanceToPay")
-        self.payment_due_day = str_to_date(data.get("PaymentDeadline"))
+        self.payment_due_day = str_to_datetime(data.get("PaymentDeadline"))
         self.bookstore_digital_material_url = (
             data.get("BookstoreDigitalMaterialLink"))
         self.bookstore_checkout_url = data.get("BookstoreCheckOutLink")

@@ -16,14 +16,18 @@ class IACoursesStatusTest(TestCase):
         self.assertEqual(len(result.keys()), 2)
         tiacs = result.get("spring2013")
         self.maxDiff = None
-        self.assertIsNotNone(tiacs.json_data())
+
         self.assertIsNotNone(str(tiacs))
         self.assertEqual(tiacs.balance, 219.85)
         self.assertTrue(len(tiacs.bookstore_checkout_url) > 0)
         self.assertTrue(len(tiacs.bookstore_digital_material_url) > 0)
-        self.assertIsNotNone(tiacs.payment_due_day)
         self.assertIsNotNone(tiacs.ia_courses)
         self.assertEqual(len(tiacs.ia_courses.keys()), 4)
+        jdata = tiacs.json_data()
+        self.assertIsNotNone(jdata)
+        self.assertEqual(
+            jdata["payment_due_day"], "2013-04-19T23:59:59.999999-08:00")
+
         self.assertEqual(
             tiacs.ia_courses[13830].json_data(),
             {
