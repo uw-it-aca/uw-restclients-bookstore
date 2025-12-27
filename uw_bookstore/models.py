@@ -189,11 +189,6 @@ def str_to_datetime(s):
     return parse(s) if (s and len(s)) else None
 
 
-def str_to_date(s):
-    dt = str_to_datetime(s)
-    return dt.date() if dt else None
-
-
 def date_to_str(dt):
     # datetime.datetime.isoformat
     return dt.isoformat() if dt else None
