@@ -187,6 +187,7 @@ class TermIACourse(Model):
 
 
 def str_to_datetime(s):
+    # Rreturns UTC-normalized datetime object
     if (s and len(s)):
         dt = parse(s.replace(".999999", ""))
         return dt.astimezone(timezone.utc)
