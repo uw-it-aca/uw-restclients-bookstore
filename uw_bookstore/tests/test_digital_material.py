@@ -26,7 +26,7 @@ class IACoursesStatusTest(TestCase):
         jdata = tiacs.json_data()
         self.assertIsNotNone(jdata)
         self.assertEqual(
-            jdata["payment_due_day"], "2013-04-19T23:59:59.999999-08:00")
+            jdata["payment_due_day"], "2013-04-20T07:59:59.999999+00:00")
 
         self.assertEqual(
             tiacs.ia_courses[13830].json_data(),

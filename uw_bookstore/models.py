@@ -1,6 +1,7 @@
 # Copyright 2025 UW-IT, University of Washington
 # SPDX-License-Identifier: Apache-2.0
 
+from datetime import timezone
 import json
 from restclients_core import models
 from restclients_core.models import Model
@@ -186,7 +187,10 @@ class TermIACourse(Model):
 
 
 def str_to_datetime(s):
-    return parse(s) if (s and len(s)) else None
+    if (s and len(s)):
+        dt = parse(s)
+        return dt.astimezone(timezone.utc)
+    return None
 
 
 def date_to_str(dt):
