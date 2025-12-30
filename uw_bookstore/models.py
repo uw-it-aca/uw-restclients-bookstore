@@ -188,7 +188,7 @@ class TermIACourse(Model):
 
 def str_to_datetime(s):
     if (s and len(s)):
-        dt = parse(s)
+        dt = parse(s.replace(".999999", ""))
         return dt.astimezone(timezone.utc)
     return None
 
