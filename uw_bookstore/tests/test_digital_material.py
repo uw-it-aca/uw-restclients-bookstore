@@ -3,6 +3,7 @@
 
 import mock
 from unittest import TestCase
+from uw_bookstore.models import str_to_datetime
 from uw_bookstore.digital_material import IACoursesStatus
 from restclients_core.exceptions import DataFailureException
 from uw_bookstore.util import fdao_bookstore_override
@@ -10,6 +11,21 @@ from uw_bookstore.util import fdao_bookstore_override
 
 @fdao_bookstore_override
 class IACoursesStatusTest(TestCase):
+    def test_str_to_datetime(self):
+        dt = str_to_datetime('2013-04-19T23:59:59.999999-08:00')
+        self.assertIsNotNone(dt)
+        self.assertEqual(dt.year, 2013)
+        self.assertEqual(dt.month, 4)
+        self.assertEqual(dt.day, 20)
+        self.assertEqual(dt.hour, 7)
+        self.assertEqual(dt.minute, 59)
+        self.assertEqual(dt.second, 59)
+
+        dt_none = str_to_datetime("")
+        self.assertIsNone(dt_none)
+        dt_none = str_to_datetime(None)
+        self.assertIsNone(dt_none)
+
     def test_get(self):
         ias = IACoursesStatus()
         result = ias.get_iacourse_status('12345678901234567890123456789012')
@@ -26,7 +42,7 @@ class IACoursesStatusTest(TestCase):
         jdata = tiacs.json_data()
         self.assertIsNotNone(jdata)
         self.assertEqual(
-            jdata["payment_due_day"], "2013-04-19T23:59:59.999999-08:00")
+            jdata["payment_due_day"], "2013-04-20T07:59:59+00:00")
 
         self.assertEqual(
             tiacs.ia_courses[13830].json_data(),
