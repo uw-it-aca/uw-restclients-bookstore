@@ -190,9 +190,8 @@ def str_to_datetime(s):
     # Returns UTC-normalized datetime object
     if (s and len(s)):
         dt = parse(s)
-        # Upstream bookstore timestamps are only required at second precision;
-        # microseconds are discarded intentionally to normalize values and avoid
-        # spurious differences due to parser/backend variations.
+        # Only second precision is needed.
+        # The microseconds are discarded as JS can't handle it.
         dt = dt.replace(microsecond=0)
         return dt.astimezone(timezone.utc)
     return None
