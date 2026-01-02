@@ -1,6 +1,7 @@
 # Copyright 2026 UW-IT, University of Washington
 # SPDX-License-Identifier: Apache-2.0
 
+from datetime import timezone
 import json
 from restclients_core import models
 from restclients_core.models import Model
@@ -139,7 +140,7 @@ class TermIACourse(Model):
     quarter = models.CharField(max_length=6)
     year = models.PositiveSmallIntegerField()
     balance = models.DecimalField(max_digits=7, decimal_places=2)
-    payment_due_day = models.DateField()
+    payment_due_day = models.DateTimeField()
     bookstore_digital_material_url = models.CharField(max_length=255)
     bookstore_checkout_url = models.CharField(max_length=255)
     last_updated = models.DateTimeField()
@@ -152,7 +153,7 @@ class TermIACourse(Model):
         self.year = data.get("Year")
         self.quarter = data.get("Quarter")
         self.balance = data.get("BalanceToPay")
-        self.payment_due_day = str_to_date(data.get("PaymentDeadline"))
+        self.payment_due_day = str_to_datetime(data.get("PaymentDeadline"))
         self.bookstore_digital_material_url = (
             data.get("BookstoreDigitalMaterialLink"))
         self.bookstore_checkout_url = data.get("BookstoreCheckOutLink")
@@ -186,12 +187,14 @@ class TermIACourse(Model):
 
 
 def str_to_datetime(s):
-    return parse(s) if (s and len(s)) else None
-
-
-def str_to_date(s):
-    dt = str_to_datetime(s)
-    return dt.date() if dt else None
+    # Returns UTC-normalized datetime object
+    if (s and len(s)):
+        dt = parse(s)
+        # Only second precision is needed.
+        # The microseconds are discarded as JS can't handle it.
+        dt = dt.replace(microsecond=0)
+        return dt.astimezone(timezone.utc)
+    return None
 
 
 def date_to_str(dt):
